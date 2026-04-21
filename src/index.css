@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  input, textarea, select {
+    @apply bg-surface text-gray-100 border border-gray-700 rounded-lg px-3 py-2 outline-none focus:border-accent;
+  }
+  body {
+    @apply antialiased;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
