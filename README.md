@@ -1,12 +1,22 @@
 # Organizer
 
-Personal PWA for tasks, notes, and calendar. Dark theme, offline-capable, installable on iOS.
+A personal PWA for managing tasks, notes, and calendar — dark theme, offline-capable, installable on iOS.
+
+## Features
+
+- **Tasks** — Create, complete, and delete tasks with priority levels (high/medium/low), due dates, and project tags
+- **Notes** — Create and edit notes organized by project
+- **Calendar** — Monthly calendar view with Google Calendar integration and task due dates
+- **Offline** — Tasks and notes cached in localStorage, with service worker caching for API responses
+- **PWA** — Installable on iOS (16.4+) and Android, runs standalone with no browser chrome
+- **Notifications** — Browser notifications for upcoming task due dates
+- **Auth** — Email/password authentication via Supabase with row-level security
 
 ## Stack
 
 - React 18 + Vite
 - Tailwind CSS
-- Supabase (auth + database)
+- Supabase (auth + Postgres)
 - Google Calendar API (read-only)
 - vite-plugin-pwa (service worker + manifest)
 
@@ -14,8 +24,7 @@ Personal PWA for tasks, notes, and calendar. Dark theme, offline-capable, instal
 
 ### 1. Supabase
 
-1. Create a project at [supabase.com](https://supabase.com)
-2. Run this SQL in the Supabase SQL Editor:
+Create a project at [supabase.com](https://supabase.com) and run this SQL in the SQL Editor:
 
 ```sql
 create table tasks (
@@ -49,25 +58,19 @@ create policy "Users manage own notes" on notes
   for all using (auth.uid() = user_id);
 ```
 
-3. Go to Project Settings → API and copy the URL and anon key.
-
 ### 2. Google Calendar API
 
-1. Go to [Google Cloud Console](https://console.cloud.google.com)
-2. Create a project (or use an existing one)
-3. Enable the **Google Calendar API**
-4. Go to Credentials → Create Credentials → API Key
-5. Restrict the key to Google Calendar API
-6. For a public calendar: make the calendar public in Google Calendar settings and use the calendar ID
-7. For a private calendar: you'll need OAuth2 (add Google as a Supabase auth provider for seamless access tokens)
+1. Enable the **Google Calendar API** in [Google Cloud Console](https://console.cloud.google.com)
+2. Create an API key and restrict it to Google Calendar API
+3. Make your calendar public in Google Calendar settings, or use OAuth2 for private calendars
 
 ### 3. Environment Variables
 
-Copy `.env.example` to `.env` and fill in your values:
-
-```
+```bash
 cp .env.example .env
 ```
+
+Fill in your Supabase URL, anon key, Google API key, and calendar ID.
 
 ### 4. Install & Run
 
@@ -76,36 +79,10 @@ npm install
 npm run dev
 ```
 
-### 5. PWA Icons
+## Deploy
 
-Replace `public/icons/icon-192.png` and `public/icons/icon-512.png` with your own icons. The placeholder SVGs are generated at build time.
-
-## Deploy to Vercel
-
-1. Push to a GitHub repo
-2. Import the repo at [vercel.com/new](https://vercel.com/new)
-3. Set the root directory to `Projects/Organizer/organizer` (or move the app to its own repo)
-4. Add environment variables in Vercel project settings:
-   - `VITE_SUPABASE_URL`
-   - `VITE_SUPABASE_ANON_KEY`
-   - `VITE_GOOGLE_API_KEY`
-   - `VITE_GOOGLE_CALENDAR_ID`
-5. Deploy
-
-### Custom Domain (optional)
-
-In Vercel project settings → Domains, add your domain and update DNS records as instructed.
+Push to GitHub and import at [vercel.com/new](https://vercel.com/new). Add the four environment variables from `.env.example` in project settings.
 
 ## iOS Install
 
-1. Open the deployed URL in Safari on iOS 16.4+
-2. Tap Share → Add to Home Screen
-3. The app runs standalone with no browser chrome
-
-## Offline
-
-Tasks and notes are cached in localStorage. When offline, the app shows cached data. Changes sync when back online.
-
-## Notifications
-
-On first task creation, the app requests notification permission. Tasks with due dates get a browser notification at 9 AM on the due date (while the app is open or the service worker is active).
+Open the deployed URL in Safari on iOS 16.4+ → Share → Add to Home Screen.
